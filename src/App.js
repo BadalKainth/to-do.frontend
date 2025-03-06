@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import TaskForm from './components/TaskForm';
-import TaskItem from './components/TaskItem';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import TaskForm from "./components/TaskForm";
+import TaskItem from "./components/TaskItem";
+import "./App.css";
 
-const API_BASE_URL = 'http://localhost:5000/tasks';
+const API_BASE_URL = "https://to-do-backend-tdld.onrender.com/tasks";
 
 function App() {
   const [tasks, setTasks] = useState([]);
@@ -16,11 +16,11 @@ function App() {
     const fetchTasks = async () => {
       try {
         const response = await fetch(API_BASE_URL);
-        
+
         if (!response.ok) {
-          throw new Error('Failed to fetch tasks');
+          throw new Error("Failed to fetch tasks");
         }
-        
+
         const data = await response.json();
         setTasks(data);
         setLoading(false);
@@ -39,33 +39,33 @@ function App() {
       if (task._id) {
         // Update existing task
         const response = await fetch(`${API_BASE_URL}/${task._id}`, {
-          method: 'PUT',
+          method: "PUT",
           headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify(task)
+          body: JSON.stringify(task),
         });
-        
+
         if (!response.ok) {
-          throw new Error('Failed to update task');
+          throw new Error("Failed to update task");
         }
-        
+
         const updatedTask = await response.json();
-        setTasks(tasks.map(t => t._id === task._id ? updatedTask : t));
+        setTasks(tasks.map((t) => (t._id === task._id ? updatedTask : t)));
       } else {
         // Add new task
         const response = await fetch(API_BASE_URL, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify(task)
+          body: JSON.stringify(task),
         });
-        
+
         if (!response.ok) {
-          throw new Error('Failed to add task');
+          throw new Error("Failed to add task");
         }
-        
+
         const newTask = await response.json();
         setTasks([...tasks, newTask]);
       }
@@ -78,14 +78,14 @@ function App() {
   const handleDeleteTask = async (id) => {
     try {
       const response = await fetch(`${API_BASE_URL}/${id}`, {
-        method: 'DELETE'
+        method: "DELETE",
       });
-      
+
       if (!response.ok) {
-        throw new Error('Failed to delete task');
+        throw new Error("Failed to delete task");
       }
-      
-      setTasks(tasks.filter(task => task._id !== id));
+
+      setTasks(tasks.filter((task) => task._id !== id));
     } catch (err) {
       setError(err.message);
     }
@@ -94,27 +94,25 @@ function App() {
   // Toggle task completion status
   const handleCompleteTask = async (id) => {
     try {
-      const task = tasks.find(task => task._id === id);
-      
+      const task = tasks.find((task) => task._id === id);
+
       const response = await fetch(`${API_BASE_URL}/${id}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           ...task,
-          completed: !task.completed
-        })
+          completed: !task.completed,
+        }),
       });
-      
+
       if (!response.ok) {
-        throw new Error('Failed to update task');
+        throw new Error("Failed to update task");
       }
-      
+
       const updatedTask = await response.json();
-      setTasks(tasks.map(task => 
-        task._id === id ? updatedTask : task
-      ));
+      setTasks(tasks.map((task) => (task._id === id ? updatedTask : task)));
     } catch (err) {
       setError(err.message);
     }
@@ -124,15 +122,15 @@ function App() {
     <div className="app">
       <div className="container">
         <h1>To-Do List</h1>
-        
-        <TaskForm 
-          onAddTask={handleAddTask} 
-          editTask={editTask} 
-          setEditTask={setEditTask} 
+
+        <TaskForm
+          onAddTask={handleAddTask}
+          editTask={editTask}
+          setEditTask={setEditTask}
         />
-        
+
         {error && <div className="error-message">{error}</div>}
-        
+
         {loading ? (
           <div className="loading">Loading tasks...</div>
         ) : (
@@ -140,8 +138,8 @@ function App() {
             {tasks.length === 0 ? (
               <div className="no-tasks">No tasks yet! Add one above.</div>
             ) : (
-              tasks.map(task => (
-                <TaskItem 
+              tasks.map((task) => (
+                <TaskItem
                   key={task._id}
                   task={task}
                   onDelete={handleDeleteTask}
